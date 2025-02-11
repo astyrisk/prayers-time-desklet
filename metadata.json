@@ -1,0 +1,8 @@
+{
+    "uuid": "prayers@astyrisk",
+    "name": "prayer",
+    "description": "A simple desklet that prayer",
+    "version": "1.0",
+    "prevent-decorations": false,
+    "max-instances": 10
+}

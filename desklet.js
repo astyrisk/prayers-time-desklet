@@ -50,19 +50,19 @@ PrayerTimesDesklet.prototype = {
         // Fetch and display prayer times
         this._updatePrayerTimes();
 
-        this._scheduleMidnightUpdate();
-    },
+    this._scheduleMidnightUpdate();
+},
 
-    _getCurrentTime: function() {
-        // Get the current time in HH:MM:SS format
-        let now = new Date();
-        let hours = String(now.getHours()).padStart(2, '0');
-        let minutes = String(now.getMinutes()).padStart(2, '0');
-        let seconds = String(now.getSeconds()).padStart(2, '0');
-        return `${hours}:${minutes}`;
-    },
+_getCurrentTime: function() {
+    // Get the current time in HH:MM:SS format
+    let now = new Date();
+    let hours = String(now.getHours()).padStart(2, '0');
+    let minutes = String(now.getMinutes()).padStart(2, '0');
+    let seconds = String(now.getSeconds()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+},
 
-    _updateCurrentTime: function() {
+_updateCurrentTime: function() {
         // Update the time label every second
         this._timeLabel.set_text(this._getCurrentTime());
         Mainloop.timeout_add_seconds(59, () => {
@@ -71,49 +71,49 @@ PrayerTimesDesklet.prototype = {
         });
     },
 
-    _updatePrayerTimes: function() {
-        global.log("[PrayerTimesDesklet] Updating prayer times");
+_updatePrayerTimes: function() {
+    global.log("[PrayerTimesDesklet] Updating prayer times");
 
-        // Get today's date in DD-MM-YYYY format
-        let today = new Date();
-        let day = String(today.getDate()).padStart(2, '0');
-        let month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-        let year = today.getFullYear();
-        let dateStr = `${day}-${month}-${year}`;
+    // Get today's date in DD-MM-YYYY format
+    let today = new Date();
+    let day = String(today.getDate()).padStart(2, '0');
+    let month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    let year = today.getFullYear();
+    let dateStr = `${day}-${month}-${year}`;
 
-        // Construct the API URL
-        let url = `${API_BASE_URL}/${dateStr}?city=${CITY}&country=${COUNTRY}&method=${METHOD}`;
-        global.log(`[PrayerTimesDesklet] API URL: ${url}`);
+    // Construct the API URL
+    let url = `${API_BASE_URL}/${dateStr}?city=${CITY}&country=${COUNTRY}&method=${METHOD}`;
+    global.log(`[PrayerTimesDesklet] API URL: ${url}`);
 
-        // Create a GET request
-        let message = Soup.Message.new('GET', url);
+    // Create a GET request
+    let message = Soup.Message.new('GET', url);
 
-        // Send the request asynchronously
-        this._httpSession.send_and_read_async(message, Soup.MessagePriority.NORMAL, null, (session, result) => {
-            try {
-                let response = this._httpSession.send_and_read_finish(result);
-                if (message.status_code === 200) {
-                    global.log("[PrayerTimesDesklet] API request successful");
+    // Send the request asynchronously
+    this._httpSession.send_and_read_async(message, Soup.MessagePriority.NORMAL, null, (session, result) => {
+        try {
+            let response = this._httpSession.send_and_read_finish(result);
+            if (message.status_code === 200) {
+                global.log("[PrayerTimesDesklet] API request successful");
 
-                    // Convert the byte array to a string using TextDecoder
-                    let decoder = new TextDecoder('utf-8');
-                    let responseBody = decoder.decode(response.get_data());
-                    global.log(`[PrayerTimesDesklet] API response: ${responseBody}`);
+                // Convert the byte array to a string using TextDecoder
+                let decoder = new TextDecoder('utf-8');
+                let responseBody = decoder.decode(response.get_data());
+                global.log(`[PrayerTimesDesklet] API response: ${responseBody}`);
 
-                    // Parse the JSON data
-                    let data = JSON.parse(responseBody);
-                    if (data && data.data && data.data.timings) {
-                        this._displayPrayerTimes(data.data.timings);
-                    } else {
-                        throw new Error("Invalid API response format");
-                    }
+                // Parse the JSON data
+                let data = JSON.parse(responseBody);
+                if (data && data.data && data.data.timings) {
+                    this._displayPrayerTimes(data.data.timings);
                 } else {
-                    throw new Error(`API request failed: ${message.status_code}`);
+                    throw new Error("Invalid API response format");
                 }
-            } catch (error) {
-                global.log(`[PrayerTimesDesklet] Error: ${error.message}`);
-                this._prayerTimesBox.remove_all_children();
-                this._prayerTimesBox.add(new St.Label({ text: 'Failed to fetch prayer times', style_class: 'prayer-times-error' }));
+            } else {
+                throw new Error(`API request failed: ${message.status_code}`);
+            }
+        } catch (error) {
+            global.log(`[PrayerTimesDesklet] Error: ${error.message}`);
+            this._prayerTimesBox.remove_all_children();
+            this._prayerTimesBox.add(new St.Label({ text: 'Failed to fetch prayer times', style_class: 'prayer-times-error' }));
             }
 
             // Schedule the next update
@@ -161,9 +161,10 @@ PrayerTimesDesklet.prototype = {
         let midnight = new Date(now);
         midnight.setHours(24, 0, 0, 0);  // Set to next midnight
         let timeUntilMidnight = midnight - now;  // Time in milliseconds
+        global.log(`Time until midnight: ${timeUntilMidnight}`);
 
         // Schedule the update at midnight
-        Mainloop.timeout_add(timeUntilMidnight / 1000, () => {
+        Mainloop.timeout_add(timeUntilMidnight, () => {
             this._updatePrayerTimes();  // Update prayer times
             this._scheduleMidnightUpdate();  // Schedule the next midnight update
             return false;  // Don't repeat

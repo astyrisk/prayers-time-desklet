@@ -7,7 +7,8 @@ A Cinnamon desklet that displays Islamic prayer times using Aldhan's API. This d
 - `git clone  https://github.com/astyrisk ~/.local/share/cinnamon/desklets/prayers@astyrisk`
 
 ## Running and Configuring
-
+[desklet](./media/desklet.png "Desklet Image")
+[desklet configuration](./media/desklet-config.png "Desklet Config Image")
 
 ## TODO 
 - [ ] support for longitude and attitude selection.

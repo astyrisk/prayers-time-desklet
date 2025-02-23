@@ -4,11 +4,12 @@ const Soup = imports.gi.Soup;
 const Desklet = imports.ui.desklet;
 const Clutter = imports.gi.Clutter;
 const Pango = imports.gi.Pango;
+const Settings = imports.ui.settings;
 
 const API_BASE_URL = "https://api.aladhan.com/v1/timingsByCity";
 const CITY = "Budapest";
 const COUNTRY = "Hungary";
-const METHOD = "2";  // Calculation method
+const METHOD = "3";  // Calculation method
 const UPDATE_INTERVAL = 600;  // Update interval in seconds
 
 function PrayerTimesDesklet(metadata, desklet_id) {
@@ -20,6 +21,15 @@ PrayerTimesDesklet.prototype = {
 
     _init: function(metadata, desklet_id) {
         Desklet.Desklet.prototype._init.call(this, metadata, desklet_id);
+
+
+        // init settings
+        this.settings = new Settings.DeskletSettings(this, metadata.uuid, desklet_id);
+        this.settings.bindProperty(Settings.BindingDirection.IN, "city", "city", this._onSettingsChanged);
+        this.settings.bindProperty(Settings.BindingDirection.IN, "country", "country", this._onSettingsChanged);
+        this.settings.bindProperty(Settings.BindingDirection.IN, "calc", "calc", this._onSettingsChanged);
+        // this.settings.bindProperty(Settings.BindingDirection.IN, "style", "style", this._onSettingsChanged);
+
 
         // Initialize Soup session
         this._httpSession = new Soup.Session();
@@ -53,6 +63,10 @@ PrayerTimesDesklet.prototype = {
     this._scheduleMidnightUpdate();
 },
 
+_onSettingsChanged: function() {
+    this._updatePrayerTimes();
+},
+
 _getCurrentTime: function() {
     // Get the current time in HH:MM:SS format
     let now = new Date();
@@ -82,7 +96,7 @@ _updatePrayerTimes: function() {
     let dateStr = `${day}-${month}-${year}`;
 
     // Construct the API URL
-    let url = `${API_BASE_URL}/${dateStr}?city=${CITY}&country=${COUNTRY}&method=${METHOD}`;
+    let url = `${API_BASE_URL}/${dateStr}?city=${this.city}&country=${this.country}&method=${this.calc}`;
     global.log(`[PrayerTimesDesklet] API URL: ${url}`);
 
     // Create a GET request

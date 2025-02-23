@@ -1,0 +1,52 @@
+{
+    "city": {
+        "default": "Budapest",
+        "type": "combobox",
+        "description": "City",
+        "options": {
+            "Budapest": "Budapest",
+            "Cairo": "Cairo",
+            "Istanbul": "Istanbul",
+            "Riyadh": "Riyadh",
+            "Dubai": "Dubai",
+            "Jakarta": "Jakarta",
+            "Kuala Lumpur": "Kuala Lumpur",
+            "London": "London",
+            "New York": "New York",
+            "Paris": "Paris",
+            "Tokyo": "Tokyo",
+            "Other": "Other"
+        }
+    },
+
+    "country": {
+        "default": "Hungary",
+        "type": "combobox",
+        "description": "Country",
+        "options": {
+            "Hungary": "Hungary",
+            "Egypt": "Egypt",
+            "Turkey": "Turkey",
+            "Saudi Arabia": "Saudi Arabia",
+            "United Arab Emirates": "United Arab Emirates",
+            "Indonesia": "Indonesia",
+            "Malaysia": "Malaysia",
+            "United Kingdom": "United Kingdom",
+            "United States": "United States",
+            "France": "France",
+            "Japan": "Japan",
+            "Other": "Other"
+        }
+    },
+
+    "calc": {
+        "default": "3",
+        "type": "combobox",
+        "description": "Calculation Method",
+        "options": {
+            "1": "1",
+            "2": "2",
+            "3": "3"
+        }
+    }
+}
